@@ -4,7 +4,6 @@ const mongoose = require("mongoose");
 const bodyParser = require('body-parser');
 const model = require('./model/order');
 const axios = require('axios');
-const {response} = require("express");
 require('dotenv').config();
 
 const mongoURL = process.env.MONGO_URL;
@@ -16,6 +15,19 @@ mongoose.connect(mongoURL);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET,POST,DELETE");
+    res.header("Access-Control-Allow-Headers", "*");
+    if (req.method === "OPTIONS") {
+        res.header(
+            "Access-Control-Allow-Methods", "GET,POST,DELETE"
+        )
+        return res.status(200).json({})
+    }
+    next();
+});
 
 app.get("/", (req, res) => {
     res.send("This is orders service");
